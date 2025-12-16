@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Event;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
 
 class EventController extends Controller
 {
@@ -15,8 +14,10 @@ class EventController extends Controller
     public function index()
     {
         if (Auth::user()->email === 'test@example.com') {
+            // Test user ziet alle tasks
             $events = Event::paginate(10);
         } else {
+            // Andere users zien alleen hun eigen tasks
             $events = Event::where('user_id', Auth::id())->paginate(10);
         }
 
@@ -36,16 +37,13 @@ class EventController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $event = $request->validate([
             'user_id' => ['required', 'exists:users,id'],
             'title' => ['required', 'string', 'max:255'],
-            'event_date' => ['required', 'date'],
+            'date' => ['required', 'date'],
         ]);
 
-        $event = Event::create([
-            'title' => $request->input('title'),
-            'event_date' => $request->input('event_date'),
-        ]);
+        $event = Event::create($event);
 
         return to_route('events.show', $event);
     }
@@ -55,7 +53,10 @@ class EventController extends Controller
      */
     public function show(Event $event)
     {
-        return view('projects.edit', ['event' => $event]);
+        if (auth()->user()->is_admin || $event->user_id === auth()->id()) {
+            return view('events.show', ['event' => $event]);
+        }
+        abort(403);
     }
 
     /**
@@ -73,7 +74,7 @@ class EventController extends Controller
     {
         $attributes = $request->validate([
             'title' => ['required', 'string', 'max:255'],
-            'event_date' => ['required', 'date'],
+            'date' => ['required', 'date'],
         ]);
 
         $event->update($attributes);
