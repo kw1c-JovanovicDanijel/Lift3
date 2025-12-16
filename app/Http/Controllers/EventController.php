@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\UserRoles;
 use App\Models\Event;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -51,7 +52,7 @@ class EventController extends Controller
      */
     public function show(Event $event)
     {
-        if (auth()->user()->is_admin || $event->user_id === auth()->id()) {
+        if (auth()->user()->role == UserRoles::ADMIN->name || $event->user_id === auth()->id()) {
             return view('events.show', ['event' => $event]);
         }
         abort(403);

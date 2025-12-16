@@ -9,6 +9,9 @@
                 </a>
 
                 @auth
+                    <a href="{{ route('users.index') }}" class="text-gray-700 hover:text-blue-600 font-medium">
+                        Gebruikers
+                    </a>
                     <span class="text-gray-700">Welkom, {{ auth()->user()->name }}</span>
                     <form method="POST" action="{{ route('logout') }}" class="inline">
                         @csrf

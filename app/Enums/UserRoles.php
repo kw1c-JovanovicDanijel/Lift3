@@ -14,7 +14,7 @@ enum UserRoles
                 'create' => false,
                 'read' => true,
                 'update' => false,
-                'delete' => true
+                'delete' => true,
             ],
             UserRoles::USER => [
                 'create' => true,
