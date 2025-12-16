@@ -14,10 +14,8 @@ class EventController extends Controller
     public function index()
     {
         if (Auth::user()->email === 'test@example.com') {
-            // Test user ziet alle tasks
             $events = Event::paginate(10);
         } else {
-            // Andere users zien alleen hun eigen tasks
             $events = Event::where('user_id', Auth::id())->paginate(10);
         }
 
@@ -64,7 +62,10 @@ class EventController extends Controller
      */
     public function edit(Event $event)
     {
-        return view('events.edit', ['event' => $event]);
+        if ($event->user_id === auth()->id()) {
+            return view('events.edit', ['event' => $event]);
+        }
+        abort(403);
     }
 
     /**

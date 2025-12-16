@@ -1,11 +1,19 @@
 <x-layouts.app>
     <x-layouts.nav />
+    @php
+        $user = auth()->user();
+        $role = \App\Enums\UserRoles::from($user->role);
+        $perms = $role->allowed();
+    @endphp
     <div class="max-w-6xl mx-auto p-6">
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-2xl font-bold">Agenda</h1>
-            <a href="{{ route('events.create') }}" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
-                Nieuw event
-            </a>
+
+            @if($perms['create'])
+                <a href="{{ route('events.create') }}" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                    Nieuw event
+                </a>
+            @endif
         </div>
 
         <div class="overflow-x-auto bg-white shadow rounded-lg">
@@ -26,21 +34,27 @@
                         <td class="px-4 py-3">{{ $event->user->name }}</td>
                         <td class="px-4 py-3 text-center">
                             <div class="flex justify-center items-center gap-3">
-                                <a href="{{ route('events.show', $event) }}" class="px-3 py-1 text-sm text-white bg-blue-600 rounded hover:bg-blue-700">
-                                    Bekijken
-                                </a>
+                                @if($perms['read'])
+                                    <a href="{{ route('events.show', $event) }}" class="px-3 py-1 text-sm text-white bg-blue-600 rounded hover:bg-blue-700">
+                                        Bekijken
+                                    </a>
+                                @endif
 
-                                <a href="{{ route('events.edit', $event) }}" class="px-3 py-1 text-sm text-white bg-yellow-500 rounded hover:bg-yellow-600">
-                                    Bewerken
-                                </a>
+                                @if($perms['update'])
+                                    <a href="{{ route('events.edit', $event) }}" class="px-3 py-1 text-sm text-white bg-yellow-500 rounded hover:bg-yellow-600">
+                                        Bewerken
+                                    </a>
+                                @endif
 
-                                <form action="{{ route('events.destroy', $event) }}" method="POST" onsubmit="return confirm('Weet je zeker dat je dit event wilt verwijderen?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="px-3 py-1 text-sm text-white bg-red-600 rounded hover:bg-red-700">
-                                        Verwijderen
-                                    </button>
-                                </form>
+                                @if($perms['delete'])
+                                    <form action="{{ route('events.destroy', $event) }}" method="POST" onsubmit="return confirm('Weet je zeker dat je dit event wilt verwijderen?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="px-3 py-1 text-sm text-white bg-red-600 rounded hover:bg-red-700">
+                                            Verwijderen
+                                        </button>
+                                    </form>
+                                @endif
                             </div>
                         </td>
                     </tr>

@@ -11,7 +11,7 @@ Route::get('/login', [LoginController::class, 'create'])->middleware(['guest'])-
 Route::post('/login', [LoginController::class, 'store'])->middleware(['guest'])->name('login');
 Route::post('/logout', LogoutController::class)->name('logout');
 
-Route::resource('/events', EventController::class);
+Route::resource('/events', EventController::class)->middleware(['auth']);
 
 Route::get('/tinker', function () {
     dd(\App\Models\User::all());

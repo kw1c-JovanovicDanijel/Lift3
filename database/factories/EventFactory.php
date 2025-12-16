@@ -21,7 +21,7 @@ class EventFactory extends Factory
             'title' => fake()->sentence(),
             'description' => fake()->paragraph(),
             'date' => fake()->dateTimeBetween(today()->addDay(), today()->addYear()),
-            'user_id' => User::inRandomOrder()->first()->id,
+            'user_id' => User::where('id', '!=', 1)->inRandomOrder()->first()->id,
         ];
     }
 }
